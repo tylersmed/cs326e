@@ -13,12 +13,12 @@ def client(server_ip, server_port):
     """TODO: Open socket and send message from sys.stdin"""
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
         soc.connect((server_ip, server_port))
-        with open(simpletest, 'rb') as fi:
-            buf = fi.read(2048)
-            while buf:
-                soc.sendall(buf)
-                buf = fi.read(2048)
+        buf = sys.stdin.buffer.read(2048)
+        while buf:
+            soc.sendall(buf)
+            buf = sys.stdin.buffer.read(2048)
 
+    soc.close()
 
 def main():
     """Parse command-line arguments and call client function """

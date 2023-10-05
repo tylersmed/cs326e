@@ -30,7 +30,8 @@ def server(server_port):
         data = conn.recv(RECV_BUFFER_SIZE)
         if not data:
             break
-        print(data)
+        message = data.decode('utf-8')
+        print(message, end='')
 
 
 def main():
