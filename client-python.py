@@ -1,7 +1,7 @@
 ###############################################################################
 # client-python.py
-# Name:
-# EID:
+# Name: Tyler Smedley
+# EID: tws933
 ###############################################################################
 
 import sys
@@ -11,7 +11,13 @@ SEND_BUFFER_SIZE = 2048
 
 def client(server_ip, server_port):
     """TODO: Open socket and send message from sys.stdin"""
-    pass
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
+        soc.connect((server_ip, server_port))
+        with open(simpletest, 'rb') as fi:
+            buf = fi.read(2048)
+            while buf:
+                soc.sendall(buf)
+                buf = fi.read(2048)
 
 
 def main():
