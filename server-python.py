@@ -11,18 +11,14 @@ import threading
 RECV_BUFFER_SIZE = 2048
 QUEUE_LENGTH = 10
 
-def handle_client(soc):
-    soc.listen(QUEUE_LENGTH)
-    conn, addr = soc.accept()
-
+def handle_client(conn):
+    
     while True:
         data = conn.recv(RECV_BUFFER_SIZE)
         if not data:
             break
         message = data.decode('utf-8')
         print(message, end='')
-    
-    soc.close()
 
 def server(server_port):
     """TODO: Listen on socket and print received message to sys.stdout"""
@@ -36,27 +32,19 @@ def server(server_port):
           + str(message))
         sys.exit()
 
-    t = threading.Thread(target=handle_client, args=((soc,)))
-    t.start()
+    while True:
+        soc.listen(QUEUE_LENGTH)
+        conn, addr = soc.accept()
 
-    # soc.listen(QUEUE_LENGTH)
-    # conn, addr = soc.accept()
-
-    # while True:
-    #     data = conn.recv(RECV_BUFFER_SIZE)
-    #     if not data:
-    #         break
-    #     message = data.decode('utf-8')
-    #     print(message, end='')
-
+        t = threading.Thread(target=handle_client, args=((conn,)))
+        t.start()
 
 def main():
     """Parse command-line argument and call server function """
-    while True:
-        if len(sys.argv) != 2:
-            sys.exit("Usage: python server-python.py [Server Port]")
-        server_port = int(sys.argv[1])
-        server(server_port)
+    if len(sys.argv) != 2:
+        sys.exit("Usage: python server-python.py [Server Port]")
+    server_port = int(sys.argv[1])
+    server(server_port)
 
 if __name__ == "__main__":
     main()
