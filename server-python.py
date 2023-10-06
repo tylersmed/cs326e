@@ -6,9 +6,23 @@
 
 import sys
 import socket
+import threading
 
 RECV_BUFFER_SIZE = 2048
 QUEUE_LENGTH = 10
+
+def handle_client(soc):
+    soc.listen(QUEUE_LENGTH)
+    conn, addr = soc.accept()
+
+    while True:
+        data = conn.recv(RECV_BUFFER_SIZE)
+        if not data:
+            break
+        message = data.decode('utf-8')
+        print(message, end='')
+    
+    soc.close()
 
 def server(server_port):
     """TODO: Listen on socket and print received message to sys.stdout"""
@@ -19,19 +33,21 @@ def server(server_port):
         soc.bind((host, server_port))
     except socket.error as message:
         print('Bind failed. Error Code : '
-          + str(message[0]) + ' Message '
-          + message[1])
+          + str(message))
         sys.exit()
 
-    soc.listen(QUEUE_LENGTH)
-    conn, addr = soc.accept()
+    t = threading.Thread(target=handle_client, args=((soc,)))
+    t.start()
 
-    while True:
-        data = conn.recv(RECV_BUFFER_SIZE)
-        if not data:
-            break
-        message = data.decode('utf-8')
-        print(message, end='')
+    # soc.listen(QUEUE_LENGTH)
+    # conn, addr = soc.accept()
+
+    # while True:
+    #     data = conn.recv(RECV_BUFFER_SIZE)
+    #     if not data:
+    #         break
+    #     message = data.decode('utf-8')
+    #     print(message, end='')
 
 
 def main():
